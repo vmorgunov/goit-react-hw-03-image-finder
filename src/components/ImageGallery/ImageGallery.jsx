@@ -3,6 +3,9 @@ import { ImageGalleryList } from './ImageGallery.styled';
 import fetchImage from 'service/ApiService';
 import { toast } from 'react-toastify';
 import ImageGalleryItem from 'components/ImageGalleryItem';
+import { ImageGalleryItemValue } from 'components/ImageGalleryItem/ImageGalleryItem.styled';
+import Button from 'components/Button/Button';
+import Spinner from 'components/Loader/Loader';
 
 export default class ImageGallery extends Component {
   state = {
@@ -21,21 +24,41 @@ export default class ImageGallery extends Component {
       this.setState({ status: 'pending' });
       fetchImage(newQuery, newPage).then(data => {
         if (data.hits.length === 0) {
-          this.setState({ status: 'rejected' });
+          toast.error(`No match found.`);
+          this.setState({ status: 'idle' });
           return;
         }
-        this.setState({ images: data.hits, status: 'resolved' });
+        this.setState({ status: 'resolved', page: 1 });
+        this.setState({
+          images: data.hits,
+        });
       });
     }
 
     if (prevPage !== newPage) {
-      fetchImage(newQuery, newPage).then(data =>
-        this.setState(prevState => ({
-          images: [...prevState.images, ...data.hits],
-        })),
-      );
+      fetchImage(newQuery, newPage)
+        .then(data =>
+          this.setState(prevState => ({
+            images: [...prevState.images, ...data.hits],
+          })),
+        )
+        .then(this.handleScroll);
     }
   }
+
+  handleScroll = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
+
+  handleBtnClick = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
+
   render() {
     const { status, images } = this.state;
     const { onSelect } = this.props;
@@ -45,24 +68,28 @@ export default class ImageGallery extends Component {
     }
 
     if (status === 'pending') {
-      return <div>Loading</div>;
-    }
-
-    if (status === 'rejected') {
-      toast.error('Oops, something gone wrong');
+      return <Spinner />;
     }
 
     if (status === 'resolved') {
       return (
-        <ImageGalleryList>
-          {images.map(({ id, webformatURL, tags, largeImageURL }) => {
-            return (
-              <li key={id} onClick={() => onSelect(largeImageURL)}>
-                <ImageGalleryItem src={webformatURL} tag={tags} />
-              </li>
-            );
-          })}
-        </ImageGalleryList>
+        <>
+          <ImageGalleryList>
+            {images.map(({ id, webformatURL, tags, largeImageURL }) => {
+              return (
+                <ImageGalleryItemValue
+                  key={id}
+                  onClick={() => onSelect(largeImageURL)}
+                >
+                  <ImageGalleryItem src={webformatURL} tag={tags} />
+                </ImageGalleryItemValue>
+              );
+            })}
+          </ImageGalleryList>
+          {images.length >= 12 && (
+            <Button handleBtnClick={this.handleBtnClick}>Load more</Button>
+          )}
+        </>
       );
     }
   }

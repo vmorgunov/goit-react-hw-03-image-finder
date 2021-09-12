@@ -13,7 +13,6 @@ export default class App extends Component {
   };
 
   handleFormSubmit = searchQuery => {
-    console.log(searchQuery);
     this.setState({ searchQuery });
   };
 

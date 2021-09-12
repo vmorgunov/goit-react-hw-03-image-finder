@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
-import ImageGalleryItem from 'components/ImageGalleryItem';
-
 import { Overlay, ModalContainer } from './Modal.styled';
+
 const modalRoot = document.querySelector('#modal-root');
 
 export default class Modal extends Component {
@@ -31,7 +30,7 @@ export default class Modal extends Component {
     return createPortal(
       <Overlay onClick={this.handleBackDropClick}>
         <ModalContainer>
-          <ImageGalleryItem src={src} alt={tag} />
+          <img src={src} alt={tag} />
         </ModalContainer>
       </Overlay>,
       modalRoot,

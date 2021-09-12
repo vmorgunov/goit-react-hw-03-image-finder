@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
+import { ImageGallery } from './ImageGalleryItem.styled';
+
 export default class ImageGalleryItem extends Component {
   render() {
     const { src, tag } = this.props;
-    return <img src={src} alt={tag} />;
+    return <ImageGallery src={src} alt={tag} />;
   }
 }
