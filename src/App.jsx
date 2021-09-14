@@ -27,13 +27,6 @@ export default class App extends Component {
 
     if (prevQuery !== newQuery || prevPage !== newPage) {
       this.fetchImages();
-      this.setState({ images: [] });
-    }
-    if (prevState.images !== this.state.images) {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: 'smooth',
-      });
     }
   }
 
@@ -56,12 +49,20 @@ export default class App extends Component {
         .catch(error => console.log(error.message))
         .finally(() => {
           this.setState({ isLoading: false });
+          this.handleScroll();
         });
     }
   };
 
+  handleScroll = () => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
+
   handleFormSubmit = searchQuery => {
-    this.setState({ searchQuery });
+    this.setState({ searchQuery: searchQuery, images: [], page: 1 });
   };
 
   handleSelectedImage = imageUrl => {
