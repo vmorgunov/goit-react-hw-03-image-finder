@@ -81,6 +81,7 @@ export default class App extends Component {
 
   render() {
     const { selectedImage, isLoading, images } = this.state;
+    const showLoadButton = images.length > 0;
     return (
       <AppContainer>
         <Searchbar onSubmit={this.handleFormSubmit} />
@@ -89,7 +90,7 @@ export default class App extends Component {
         {selectedImage && (
           <Modal src={selectedImage} onClose={this.handleModalClose} />
         )}
-        {images.length > 0 && (
+        {showLoadButton && (
           <Button
             title="Load more"
             handleBtnClick={this.handleBtnClick}

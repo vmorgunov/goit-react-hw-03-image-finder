@@ -7,12 +7,13 @@ const ImageGallery = ({ images, onSelect }) => {
     <ImageGalleryList>
       {images &&
         images.map(({ id, webformatURL, tags, largeImageURL }) => {
+          const selectImage = () => onSelect(largeImageURL);
           return (
             <ImageGalleryItem
               key={id}
               webformatURL={webformatURL}
               tag={tags}
-              onSelect={() => onSelect(largeImageURL)}
+              onSelect={selectImage}
             />
           );
         })}
